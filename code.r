@@ -3,7 +3,8 @@
 
 # Carregando as bibliotecas ----
 library(tidyverse)
-
+library(plotly)
+library(gridExtra)
 
 setwd("F:/Ciência de Dados/Comunidade_de_estatistica/Marketing Analytics/projeto_final/marketing-analytics-estatidados")
 getwd()
@@ -25,6 +26,38 @@ dados <- dados %>%
 head(dados)
 
 # Analisando as variáveis ----
+
+# Preço
+summary(dados$price)
+
+# Observando o histograma do preço
+preco <- ggplot(dados, aes(x = price)) +
+  geom_histogram(bins = 200) +
+  ggtitle("Histograma com a Frequência Simples do Preço antes do ajuste") +
+  xlab("Preço") +
+  ylab("Frequência Simples (Quantidade)") 
+
+ggplotly(preco)
+
+
+dados_preco_ajustado <- dados %>%
+  filter(price >= 100)
+
+preco_ajustado <- ggplot(dados_preco_ajustado, aes(x = price)) +
+  geom_histogram(bins = 200) +
+  ggtitle("Histograma com a Frequência Simples do Preço depois do ajuste") +
+  xlab("Preço") +
+  ylab("Frequência Simples (Quantidade)") 
+
+ggplotly(preco_ajustado)
+
+grid.arrange(preco, preco_ajustado)
+
+
+
+
+summary(dados_preco_ajustado$price)
+
 
 valores_por_tipo_de_quarto <- dados %>%
   group_by(room_type) %>% 
