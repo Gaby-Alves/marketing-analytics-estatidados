@@ -5,6 +5,7 @@
 library(tidyverse)
 library(plotly)
 library(gridExtra)
+library(e1071)
 
 setwd("F:/Ciência de Dados/Comunidade_de_estatistica/Marketing Analytics/projeto_final/marketing-analytics-estatidados")
 getwd()
@@ -31,6 +32,7 @@ head(dados)
 summary(dados$price)
 
 # Observando o histograma do preço
+
 preco <- ggplot(dados, aes(x = price)) +
   geom_histogram(bins = 200) +
   ggtitle("Histograma com a Frequência Simples do Preço antes do ajuste") +
@@ -40,6 +42,7 @@ preco <- ggplot(dados, aes(x = price)) +
 ggplotly(preco)
 
 
+# Ajustando a variavel preço
 dados_preco_ajustado <- dados %>%
   filter(price >= 100)
 
@@ -51,17 +54,35 @@ preco_ajustado <- ggplot(dados_preco_ajustado, aes(x = price)) +
 
 ggplotly(preco_ajustado)
 
+# Colocando os histogramas lado a lado
 grid.arrange(preco, preco_ajustado)
 
 
+# Boxplot de preco
+box_plot_preco_ajustado <- ggplot(dados_preco_ajustado, aes(x = "", y = price)) +
+  geom_boxplot()
 
-
+# Medidas de tendencia central
 summary(dados_preco_ajustado$price)
 
 
-valores_por_tipo_de_quarto <- dados %>%
+# Medidas de dispersão
+dados_preco_ajustado %>% 
+  summarise(desvio_padrao = sd(price), coeficiente_var = desvio_padrao/mean(price)*100)
+
+# Observando se há assimetria
+skewness(dados_preco_ajustado$price) # skewness > 0 então positivo
+
+# Observando o formato da curva
+kurtosis(dados_preco_ajustado$price) # 0,77 < 3, entao platocurtica
+
+# Preco vs localização
+
+
+
+valores_por_tipo_de_quarto <- dados_preco_ajustado %>%
   group_by(room_type) %>% 
-  summarise(preco_medio=mean(price), mediana_preco = median(price), desvio_padrao = sd(price), cv = (desvio_padrao/preco_medio))
+  summarise(preco_medio=mean(price), mediana_preco = median(price), desvio_padrao = sd(price), cv = (desvio_padrao/preco_medio)*100)
 
 valores_por_tipo_de_quarto
 
@@ -81,4 +102,18 @@ valores_por_localizacao <- dados %>%
   summarise(preco_medio=mean(price), mediana_preco = median(price), desvio_padrao = sd(price), cv = (desvio_padrao/preco_medio))
 
 valores_por_localizacao
+
+is.logical(dados_preco_ajustado$neighbourhood_cleased)
+
+
+bairros_selecionados <- c("Leblon", "Ipanema", "Lagoa", "Gávea", "Jardim Botânico", "Recreio dos Bandeirantes", "Copacabana", "Freguesia (Jacarepaguá)", "Tijuca", "Leme",
+                          "Humaitá", "Botafogo", "Flamengo", "São Conrado","Laranjeiras", "Cosme Velho")
+
+dados_preco_ajustado$neighbourhood_cleansed <- dados_preco_ajustado$neighbourhood_cleansed %in% bairros_selecionados
+
+
+
+
+bairros_selecionados %in% dados_preco_ajustado$neighbourhood_cleansed
+
 
