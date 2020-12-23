@@ -76,9 +76,60 @@ skewness(dados_preco_ajustado$price) # skewness > 0 então positivo
 # Observando o formato da curva
 kurtosis(dados_preco_ajustado$price) # 0,77 < 3, entao platocurtica
 
-# Preco vs localização
 
 
+
+# Preço vs localização
+valores_por_localizacao <- dados %>% 
+  group_by(neighbourhood_cleansed) %>% 
+  summarise(preco_medio=mean(price), mediana_preco = median(price), desvio_padrao = sd(price), cv = (desvio_padrao/preco_medio))
+
+valores_por_localizacao
+
+
+bairros_selecionados <- c("Leblon", "Ipanema", "Lagoa", "Gávea", "Jardim Botânico", "Recreio dos Bandeirantes", "Copacabana", "Freguesia (Jacarepaguá)", "Tijuca", "Leme",
+                          "Humaitá", "Botafogo", "Flamengo", "São Conrado","Laranjeiras", "Cosme Velho", "Santa Tereza", "Centro", "Camorim", "Catete", "Maracanã", "Urca"
+)
+
+dados_preco_ajustado$bairros_selecionados <- dados_preco_ajustado$neighbourhood_cleansed %in% bairros_selecionados
+
+
+(medidas_agrup_localizacao <- dados_preco_ajustado %>%
+    group_by(bairros_selecionados) %>% 
+    summarise(media = mean(price), mediana = median(price), desvio_padrao = sd(price),
+              cv = desvio_padrao/media))
+
+(medidas_agrup_localizacao <- dados_preco_ajustado %>%
+    group_by(bairros_selecionados) %>% 
+    summarize(media = mean(price), mediana = median(price), desvio_padrao = sd(price),
+              cv = desvio_padrao/media, minimo = min(price), maximo = max(price)))
+
+# Obtendo os quartis agrupando ----
+p <- c(0.25,0.50,0.75)
+p_names <- map_chr(p, ~paste0(.x*100, "%"))
+
+p_funs <- map(p, ~partial(quantile, probs = .x, na.rm = TRUE)) %>% 
+  set_names(nm = p_names)
+
+p_funs
+
+# ----
+quartis_preco_agrp_bairro <- dados_preco_ajustado %>%
+  group_by(bairros_selecionados) %>% 
+  summarize_at(vars(price), funs(!!!p_funs))
+
+
+
+
+ggplot(dados_preco_ajustado, aes(x = bairros_selecionados, y = price, fill = bairros_selecionados)) +
+  geom_boxplot() +
+  labs(fill = "É um bairro selecionado?") +
+  ggtitle("Boxplot de preço agrupado por bairros selecionados")
+  ylab("Preço") +
+  xlab("Bairros Selecionados")
+
+
+# Preco vs tipo de propriedade
 
 valores_por_tipo_de_quarto <- dados_preco_ajustado %>%
   group_by(room_type) %>% 
@@ -97,23 +148,7 @@ ggplot(dados, aes( x = price)) +
   geom_histogram() +
   facet_wrap(~room_type)
 
-valores_por_localizacao <- dados %>% 
-  group_by(neighbourhood_cleansed) %>% 
-  summarise(preco_medio=mean(price), mediana_preco = median(price), desvio_padrao = sd(price), cv = (desvio_padrao/preco_medio))
-
-valores_por_localizacao
-
-is.logical(dados_preco_ajustado$neighbourhood_cleased)
 
 
-bairros_selecionados <- c("Leblon", "Ipanema", "Lagoa", "Gávea", "Jardim Botânico", "Recreio dos Bandeirantes", "Copacabana", "Freguesia (Jacarepaguá)", "Tijuca", "Leme",
-                          "Humaitá", "Botafogo", "Flamengo", "São Conrado","Laranjeiras", "Cosme Velho")
-
-dados_preco_ajustado$neighbourhood_cleansed <- dados_preco_ajustado$neighbourhood_cleansed %in% bairros_selecionados
-
-
-
-
-bairros_selecionados %in% dados_preco_ajustado$neighbourhood_cleansed
 
 
