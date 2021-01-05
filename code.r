@@ -127,13 +127,14 @@ ggplot(dados_preco_ajustado, aes(x = bairros_selecionados, y = price, fill = bai
   ggtitle("Boxplot de preço agrupado por bairros selecionados")
   ylab("Preço") +
   xlab("Bairros Selecionados")
-
+  
+  
 
 # Preco vs tipo de propriedade
 
 valores_por_tipo_de_quarto <- dados_preco_ajustado %>%
   group_by(room_type) %>% 
-  summarise(preco_medio=mean(price), mediana_preco = median(price), desvio_padrao = sd(price), cv = (desvio_padrao/preco_medio)*100)
+  summarise(minimo = min(price),preco_medio=mean(price), mediana_preco = median(price), maximo = max(price),  desvio_padrao = sd(price), cv = (desvio_padrao/preco_medio)*100)
 
 valores_por_tipo_de_quarto
 
@@ -141,7 +142,9 @@ valores_por_tipo_de_quarto
 
 ggplot(dados, aes( x = room_type, y = price, fill = room_type)) +
   geom_boxplot() +
-  labs(fill = "Tipo de quarto")
+  labs(fill = "Tipo de quarto") +
+  xlab("Tipo de quarto") +
+  ylab("Preço")
   
 
 ggplot(dados, aes( x = price)) +
@@ -149,6 +152,13 @@ ggplot(dados, aes( x = price)) +
   facet_wrap(~room_type)
 
 
+quartis_prec_agrp_tipo_quarto <- dados_preco_ajustado %>%
+  group_by(room_type) %>%
+  summarize_at(vars(price), funs(!!!p_funs))
+
+quartis_prec_agrp_tipo_quarto
 
 
 
+
+skewness(dados_preco_ajustado$room_type)
