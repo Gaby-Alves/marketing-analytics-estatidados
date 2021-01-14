@@ -1,11 +1,12 @@
 # Analise de dados do Airbnb
-
+install.packages("moments")
 
 # Carregando as bibliotecas ----
 library(tidyverse)
 library(plotly)
 library(gridExtra)
 library(e1071)
+library(moments)
 
 setwd("F:/Ciência de Dados/Comunidade_de_estatistica/Marketing Analytics/projeto_final/marketing-analytics-estatidados")
 getwd()
@@ -128,6 +129,10 @@ ggplot(dados_preco_ajustado, aes(x = bairros_selecionados, y = price, fill = bai
   ylab("Preço") +
   xlab("Bairros Selecionados")
   
+
+dados_preco_ajustado %>%
+  group_by(bairros_selecionados) %>%
+  summarize(skew = skewness(price), kurtosis = kurtosis(price))
   
 
 # Preco vs tipo de propriedade
@@ -160,5 +165,14 @@ quartis_prec_agrp_tipo_quarto
 
 
 
+# Calculando skewness e kurtosis do preço agrupado por tipo de quarto
+dados_preco_ajustado %>% 
+  group_by(room_type) %>%
+  summarise(skew = skewness(price), kurtosis = kurtosis(price))
+
 
 skewness(dados_preco_ajustado$room_type)
+
+
+
+
