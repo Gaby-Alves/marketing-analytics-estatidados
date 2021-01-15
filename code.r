@@ -174,5 +174,59 @@ dados_preco_ajustado %>%
 skewness(dados_preco_ajustado$room_type)
 
 
+# Numero de reviews
+
+#Substituindo os NAs por 0
+dados_preco_ajustado$reviews_per_month[is.na(dados_preco_ajustado$reviews_per_month)] <- 0
+
+#Pegando as medidas resumos
+dados_preco_ajustado %>%
+  summarize(media = mean(reviews_per_month), mediana = median(reviews_per_month),
+            max = max(reviews_per_month), min = min(reviews_per_month),
+            desvio_padrao = sd(reviews_per_month), cv = desvio_padrao/media * 100)
+
+summary(dados_preco_ajustado$reviews_per_month)
 
 
+# Curtose e assimetria
+skewness(dados_preco_ajustado$reviews_per_month)
+kurtosis(dados_preco_ajustado$reviews_per_month)
+
+
+
+
+###
+
+ggplot(dados_preco_ajustado, aes(x = reviews_per_month, y = price)) +
+  geom_point()
+# Pela lógica deveria haver uma correlação positiva, mas parece que o data frame
+# é contaminado por muitos valores 0. Sera que nao tem importancia?
+
+###
+
+ggplot(dados_preco_ajustado, aes(x = reviews_per_month, y = price, color = bairros_selecionados)) +
+  geom_point()
+
+
+# reviews agrupado por room_type
+dados_preco_ajustado %>%
+  group_by(room_type) %>% 
+  summarize(media = mean(reviews_per_month), mediana = median(reviews_per_month),
+            max = max(reviews_per_month), min = min(reviews_per_month),
+            desvio_padrao = sd(reviews_per_month), cv = desvio_padrao/media * 100)
+
+quartis_preco_agrp_review_tipo_de_quarto <- dados_preco_ajustado %>%
+  group_by(room_type) %>% 
+  summarize_at(vars(reviews_per_month), funs(!!!p_funs))
+
+
+# reviews agrupado por localização
+dados_preco_ajustado %>%
+  group_by(bairros_selecionados) %>% 
+  summarize(media = mean(reviews_per_month), mediana = median(reviews_per_month),
+            max = max(reviews_per_month), min = min(reviews_per_month),
+            desvio_padrao = sd(reviews_per_month), cv = desvio_padrao/media * 100)
+
+quartis_preco_agrp_review_tipo_de_bairros_selecionados <- dados_preco_ajustado %>%
+  group_by(bairros_selecionados) %>% 
+  summarize_at(vars(reviews_per_month), funs(!!!p_funs))
