@@ -268,11 +268,26 @@ skewness(dados_preco_ajustado$minimum_nights)
 kurtosis(dados_preco_ajustado$minimum_nights)
 
 
-ggplot(dados_preco_ajustado, aes(x = minimum_nights)) +
+minimo_noite <- ggplot(dados_preco_ajustado, aes(x = minimum_nights)) +
   geom_freqpoly() +
   xlab("Mínimo de noites") +
   ylab("Contagem") +
   ggtitle("Frequência de polígonos do mínimo de noites")
 
 
+minimo_bairro <- ggplot(dados_preco_ajustado, aes(x = minimum_nights, colour = bairros_selecionados)) +
+  geom_freqpoly() +
+  xlab("Mínimo de noites") +
+  ylab("Contagem") +
+  ggtitle("Frequência de polígonos do mínimo de noites agrupado por bairro selecionados")
 
+
+minimo_room <- ggplot(dados_preco_ajustado, aes(x = minimum_nights, colour = room_type)) +
+  geom_freqpoly(bins  = 15) +
+  xlab("Mínimo de noites") +
+  ylab("Contagem") +
+  ggtitle("Frequência de polígonos do mínimo de noites agrupado por tipo de quarto") 
+
+
+agrup_graf_noite <- grid.arrange(minimo_noite, minimo_bairro, minimo_room)
+ggplotly(agrup_graf_noite)
