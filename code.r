@@ -29,7 +29,7 @@ head(dados)
 
 # Analisando as variáveis ----
 
-# Preço
+# Preço-----
 summary(dados$price)
 
 # Observando o histograma do preço
@@ -80,7 +80,7 @@ kurtosis(dados_preco_ajustado$price) # 0,77 < 3, entao platocurtica
 
 
 
-# Preço vs localização
+# Preço vs localização-----
 valores_por_localizacao <- dados %>% 
   group_by(neighbourhood_cleansed) %>% 
   summarise(preco_medio=mean(price), mediana_preco = median(price), desvio_padrao = sd(price), cv = (desvio_padrao/preco_medio))
@@ -135,7 +135,7 @@ dados_preco_ajustado %>%
   summarize(skew = skewness(price), kurtosis = kurtosis(price))
   
 
-# Preco vs tipo de propriedade
+# Preco vs tipo de propriedade-----
 
 valores_por_tipo_de_quarto <- dados_preco_ajustado %>%
   group_by(room_type) %>% 
@@ -174,7 +174,7 @@ dados_preco_ajustado %>%
 skewness(dados_preco_ajustado$room_type)
 
 
-# Numero de reviews
+# Numero de reviews-----
 
 #Substituindo os NAs por 0
 dados_preco_ajustado$reviews_per_month[is.na(dados_preco_ajustado$reviews_per_month)] <- 0
@@ -230,3 +230,49 @@ dados_preco_ajustado %>%
 quartis_preco_agrp_review_tipo_de_bairros_selecionados <- dados_preco_ajustado %>%
   group_by(bairros_selecionados) %>% 
   summarize_at(vars(reviews_per_month), funs(!!!p_funs))
+
+
+reviews_puro <- ggplot(dados_preco_ajustado, aes(x = reviews_per_month)) +
+  geom_freqpoly() +
+  ggtitle("Frequência de poligonos da quantidade de reviews por mês") +
+  xlab("Quantiade de reviews por mês") +
+  ylab("Contagem")
+
+reviews_localizacao <- ggplot(dados_preco_ajustado, aes(x = reviews_per_month, color = bairros_selecionados)) +
+  geom_freqpoly() +
+  ggtitle("Frequência de poligonos da quantidade de reviews por mês agrupado por bairros selecionados") +
+  xlab("Quantiade de reviews por mês") +
+  ylab("Contagem")
+
+
+reviews_room <- ggplot(dados_preco_ajustado, aes(x = reviews_per_month, color = room_type)) +
+  geom_freqpoly() +
+  ggtitle("Frequência de poligonos da quantidade de reviews por mês agrupado por tipo de quarto") +
+  xlab("Quantiade de reviews por mês") +
+  ylab("Contagem") +
+  labs(fill = "Tipo de quarto")
+
+grid.arrange(reviews_puro, reviews_localizacao, reviews_room)
+
+# Mínimo de noites------
+
+dados_preco_ajustado %>%
+  summarize(media = mean(minimum_nights), mediana = median(minimum_nights),
+            min = min(minimum_nights), max= max(minimum_nights),
+            desvio_padrao = sd(minimum_nights), cv = desvio_padrao/media * 100)
+
+summary(dados_preco_ajustado$minimum_nights)
+table(dados_preco_ajustado$minimum_nights)
+
+skewness(dados_preco_ajustado$minimum_nights)
+kurtosis(dados_preco_ajustado$minimum_nights)
+
+
+ggplot(dados_preco_ajustado, aes(x = minimum_nights)) +
+  geom_freqpoly() +
+  xlab("Mínimo de noites") +
+  ylab("Contagem") +
+  ggtitle("Frequência de polígonos do mínimo de noites")
+
+
+
