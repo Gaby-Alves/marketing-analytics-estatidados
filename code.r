@@ -291,3 +291,50 @@ minimo_room <- ggplot(dados_preco_ajustado, aes(x = minimum_nights, colour = roo
 
 agrup_graf_noite <- grid.arrange(minimo_noite, minimo_bairro, minimo_room)
 ggplotly(agrup_graf_noite)
+
+ggplot(dados_preco_ajustado, aes(x = minimum_nights, y = price)) +
+  geom_jitter() +
+  xlab("Mínimo de noites") +
+  ylab("Preço")
+
+
+cor(dados_preco_ajustado$price, dados_preco_ajustado$minimum_nights)
+
+# Disponibilidade em 365----
+
+# Criando uma variavel em %, talvez faça mais sentido trabalhar com ela visto que o max
+# que o Airbnb considera so 365 dias.
+
+# Resumindo os dados
+dados_preco_ajustado %>% 
+  summarize(media = mean(availability_365), mediana = median(availability_365),
+            min = min(availability_365), max = max(availability_365),
+            desvio_padrao = sd(availability_365), cv = desvio_padrao/media * 100)
+
+summary(dados_preco_ajustado$availability_365)
+
+
+# assimetria e curtose
+skewness(dados_preco_ajustado$availability_365)
+e1071::skewness(dados_preco_ajustado$availability_365)
+kurtosis(dados_preco_ajustado$availability_365)
+
+
+
+
+dados_preco_ajustado <- dados_preco_ajustado %>%
+  mutate(availability_365_perc = availability_365/365 * 100)
+
+ggplot(dados_preco_ajustado, aes(x = availability_365)) +
+  geom_histogram()
+
+
+# Observando a dispersão
+ggplot(dados_preco_ajustado, aes(x = availability_365, y = price)) +
+  geom_point()
+
+cor(dados_preco_ajustado$availability_365, dados_preco_ajustado$price)
+
+
+
+
