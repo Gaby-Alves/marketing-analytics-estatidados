@@ -7,6 +7,7 @@ library(plotly)
 library(gridExtra)
 library(e1071)
 library(moments)
+library(corrplot)
 
 setwd("F:/Ciência de Dados/Comunidade_de_estatistica/Marketing Analytics/projeto_final/marketing-analytics-estatidados")
 getwd()
@@ -334,6 +335,29 @@ ggplot(dados_preco_ajustado, aes(x = availability_365, y = price)) +
   geom_point()
 
 cor(dados_preco_ajustado$availability_365, dados_preco_ajustado$price)
+
+
+vetor_correlacao <- dados_preco_ajustado %>%
+  select(price, availability_365, minimum_nights) %>%
+  rename(Preço = price, Disponibilidade_365 = availability_365, Mínimo_de_noites = minimum_nights)
+
+cor_vetor <- cor(vetor_correlacao)
+
+corrplot(cor_vetor)
+
+corrplot(
+  cor_vetor,
+  method = 'color',
+  cl.pos = 'b',
+  type = 'lower',
+  addgrid.col = 'white',
+  addCoef.col = 'black',
+  tl.col = 'black',
+  tl.cex = 0.7,
+  number.cex = 0.7,
+  cl.cex = 0.7
+)
+
 
 
 
