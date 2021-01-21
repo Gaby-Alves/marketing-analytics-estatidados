@@ -1,5 +1,7 @@
 # Analise de dados do Airbnb
 install.packages("moments")
+install.packages("moderndive")
+
 
 # Carregando as bibliotecas ----
 library(tidyverse)
@@ -8,6 +10,8 @@ library(gridExtra)
 library(e1071)
 library(moments)
 library(corrplot)
+library(writexl)
+library(moderndive)
 
 setwd("F:/Ciência de Dados/Comunidade_de_estatistica/Marketing Analytics/projeto_final/marketing-analytics-estatidados")
 getwd()
@@ -359,6 +363,35 @@ corrplot(
 )
 
 
+# Criando arquivo xlsx para ler no gtrel
+write_xlsx(dados_preco_ajustado, "dados.xlsx")
 
 
+# Modelos
+# Modelo price vs room type
+modelo_simples_room <- lm(price~room_type, dados_preco_ajustado)
 
+summary(modelo_simples_room)
+
+get_regression_table(modelo_simples_room)
+
+# Modelo price vs location
+modelo_simples_localizacao <- lm(price~bairros_selecionados, dados_preco_ajustado)
+
+summary(modelo_simples_localizacao)
+
+get_regression_table(modelo_simples_localizacao)
+
+# Modelo price vs reviews
+modelo_simples_reviews <- lm(price~availability_365_perc, dados_preco_ajustado)
+
+summary(modelo_simples_reviews)
+
+get_regression_table(modelo_simples_reviews)
+
+# Modelo price vs minimum nights
+modelo_simples_noites <- lm(price~minimum_nights, dados_preco_ajustado)
+
+summary(modelo_simples_noites)
+
+get_regression_table(modelo_simples_noites)
