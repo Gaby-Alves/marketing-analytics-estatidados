@@ -383,15 +383,35 @@ summary(modelo_simples_localizacao)
 get_regression_table(modelo_simples_localizacao)
 
 # Modelo price vs reviews
-modelo_simples_reviews <- lm(price~availability_365_perc, dados_preco_ajustado)
+modelo_simples_reviews <- lm(price~reviews_per_month, dados_preco_ajustado)
 
 summary(modelo_simples_reviews)
 
 get_regression_table(modelo_simples_reviews)
 
+
+
+# Modelo price vs disponibilidade 
+modelo_simples_disponibilidade <- lm(price~availability_365_perc, dados_preco_ajustado)
+
+summary(modelo_simples_disponibilidade)
+
+get_regression_table(modelo_simples_reviews)
 # Modelo price vs minimum nights
 modelo_simples_noites <- lm(price~minimum_nights, dados_preco_ajustado)
 
 summary(modelo_simples_noites)
 
 get_regression_table(modelo_simples_noites)
+
+# Modelo price vs. numero de reviews
+
+
+
+# Modelo de regressao multipla ----
+(lm_multiplo_completo <- lm(price~room_type + bairros_selecionados + availability_365_perc + minimum_nights + reviews_per_month, dados_preco_ajustado))
+
+summary(lm_multiplo_completo)
+
+(lm_multiplo_reduzido <- lm(price~room_type  + availability_365_perc + reviews_per_month, dados_preco_ajustado))
+summary(lm_multiplo_reduzido)
