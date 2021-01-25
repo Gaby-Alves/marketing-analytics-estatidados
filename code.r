@@ -342,8 +342,8 @@ cor(dados_preco_ajustado$availability_365, dados_preco_ajustado$price)
 
 
 vetor_correlacao <- dados_preco_ajustado %>%
-  select(price, availability_365, minimum_nights) %>%
-  rename(Preço = price, Disponibilidade_365 = availability_365, Mínimo_de_noites = minimum_nights)
+  select(price, availability_365, minimum_nights, reviews_per_month) %>%
+  rename(Preço = price, Disponibilidade_365 = availability_365, Mínimo_de_noites = minimum_nights, Reviews_por_mês = reviews_per_month)
 
 cor_vetor <- cor(vetor_correlacao)
 
@@ -403,9 +403,6 @@ modelo_simples_noites <- lm(price~minimum_nights, dados_preco_ajustado)
 summary(modelo_simples_noites)
 
 get_regression_table(modelo_simples_noites)
-
-# Modelo price vs. numero de reviews
-
 
 
 # Modelo de regressao multipla ----
